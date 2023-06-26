@@ -1,3 +1,6 @@
+__all__ = ['TestRate']
+
+
 class TestRate:
     """Класс-дескриптор для проверки выставленных оценок."""
 
@@ -7,16 +10,18 @@ class TestRate:
 
     def __set_name__(self, owner, name):
         """Сохранить имя параметра."""
-        self.param_name = '_' + name
+        self.param_name = name
 
     def __set__(self, instance, value):
         """Установка значения атрибута."""
         self._validate(value)
-        setattr(instance, self.param_name, value)
+        instance.__dict__[self.param_name] = value
+        # setattr(instance, self.param_name, value)
 
     def __get__(self, instance, owner):
         """Получить значение атрибута"""
-        getattr(instance, self.param_name)
+        return instance.__dict__[self.param_name]
+        # getattr(instance, self.param_name)
 
     def _validate(self, value):
         """Валидация полученного значения."""

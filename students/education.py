@@ -1,8 +1,8 @@
 import csv
 from pathlib import Path
 
-from .disciplines import Discipline
 from .test_name import TestName
+from .disciplines import Discipline
 
 __all__ = ['Student']
 
@@ -62,7 +62,7 @@ class Student:
     def save_progress(self):
         """Сохранение информации об успеваемости студента."""
         file_name = self.short_name + 'csv'
-        with open(file_name, "w", encoding="UTF-8") as file:
+        with open(file_name, "w", encoding="UTF-8", newline='') as file:
             csv_writer = csv.writer(file, dialect="excel", quoting=csv.QUOTE_NONNUMERIC)
             for discipline in self._progress:
                 csv_writer.writerow([discipline.name, discipline.rate_value, discipline.test_value])
@@ -73,7 +73,7 @@ class Student:
                  "     Предмет    | оценка | тест \n" \
                  "--------------------------------\n"
         for discipline in self._progress:
-            result += f"{discipline.name:16s}|{discipline.rate_value:8d}|{discipline.test_value:8d}\n"
+            result += f"{discipline.name:16}|{discipline.rate_value:7} |{discipline.test_value:5}\n"
         result += "--------------------------------"
         return result
 
@@ -88,9 +88,13 @@ class Student:
         return result
 
     def append_to_progress(self, discipline: Discipline):
-        """Добавление новой дисциплины в список успеваемости студента. Дисциплина не должна присутствовать в списке."""
+        """Добавление новой дисциплины в список успеваемости студента.
+        Если дисциплина имеет недопустимое имя или присутствует в списке - вызывает ValueError
+        """
         if discipline.name in _DISCIPLINES and not self.find_discipline_in_progress(discipline):
             self._progress.append(discipline)
+        else:
+            raise ValueError(f"{discipline.name} - недопустимая дисциплина, или уже есть в списке!")
 
 
 if __name__ == '__main__':
